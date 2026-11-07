@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-UAQPmYJSD+GbVgBd/oOxNZD0XKDuWhHZSw1rbTALEaE='; style-src 'sha256-YFtHrnlAjx7d9LWMMtkHjdTOGqwjCjcDDne6rBM8d9M='; base-uri 'none'; form-action 'none'; connect-src 'none'"><meta name="referrer" content="no-referrer"><meta http-equiv="Cache-Control" content="no-store">
+<title>Ritorno alla Regia dei numeri</title>
+<style>body{margin:0;background:#111e2e;color:#eff6ff;font:20px/1.6 system-ui,sans-serif}main{max-width:800px;margin:12vh auto;padding:32px}h1{font-size:34px}a{color:#91dcff}</style></head>
+<body><main><h1>Ritorno alla Regia dei numeri</h1><p id="status" role="status">Controllo del ritorno in corso.</p><p>La Regia deve essere aperta sullo stesso PC e nello stesso browser.</p><a id="home" href="http://127.0.0.1:22140/#accessi">Torna agli Accessi</a></main>
+<script>
+(function(){
+'use strict';
+const incoming=new URLSearchParams(location.search);
+history.replaceState(null,'',location.pathname);
+const status=document.getElementById('status');
+const state=incoming.get('state')||'';
+const code=incoming.get('code')||'';
+if(incoming.getAll('state').length!==1||incoming.getAll('code').length>1||incoming.getAll('error').length>1||
+   !/^[A-Za-z0-9_-]{20,128}$/.test(state)||code.length>4096||(!code&&!incoming.has('error'))||
+   (code&&incoming.has('error'))){
+ status.textContent='Ritorno incompleto. Riparti da Accessi nella Regia.';
+ return;
+}
+const outgoing=new URLSearchParams({state:state});
+if(incoming.has('error'))outgoing.set('error','consenso_negato');
+else outgoing.set('code',code);
+status.textContent='Ritorno al programma su questo PC in corso.';
+location.replace('http://127.0.0.1:22140/oauth/tiktok?'+outgoing.toString());
+})();
+</script></body></html>
+
